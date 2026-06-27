@@ -1,22 +1,41 @@
-# 备份文件
+# Backup files
 *.bak
 *.bak.*
+*.bak*
+*.backup
+*.old
+
+# Local generated backups
+data.js.bak*
+README.md.bak*
+app.js.bak*
+hardware_db.json.bak*
+备份_*/
+旧版备份/
+
+# Local test/demo pages
+debug.html
+error_test.html
+test_cpu.html
+compare.html
+cyber_score.html
 
 # Python
 __pycache__/
 *.py[cod]
 *.egg-info/
+.pytest_cache/
 
 # IDE
 .vscode/
 .idea/
 
-# 系统文件
+# System files
 Thumbs.db
 Desktop.ini
 .DS_Store
 
-# 临时文件
+# Temp files
 *.tmp
 *.temp
 temp/
