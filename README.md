@@ -119,4 +119,4 @@ BuildAudit 是一个装机配置对比与评分工具，帮你在攒机时快速
 ## 许可证
 
 MIT License — 详见 [LICENSE](LICENSE) 文件。
-*（内容由AI生成，仅供参考）*
+
