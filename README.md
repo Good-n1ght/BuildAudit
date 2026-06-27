@@ -1,14 +1,3 @@
----
-AIGC:
-    Label: "1"
-    ContentProducer: 001191440300708461136T1XGW3
-    ProduceID: 1d901ace6510f3f7162dab4a93f6993e_ba778d6f71e911f1897e5254002afed2
-    ReservedCode1: wqE2qWu4pgqyV1qifXHLo4OnvAuT2qbqYgx2I3F4j324elhlcW7zcCVNd/aUEvEX5lTYcHF8GZP+aw8wjqW6XC5OYRKx7qljDPokyP7oMjnTaSdt6vJ9j0yTBlU6+Y+CjWxZiD2LlrtZIbPkaBw2Jv8I9sclEHSkYLogXIXClLrHX10AloiE0N6iL+E=
-    ContentPropagator: 001191440300708461136T1XGW3
-    PropagateID: 1d901ace6510f3f7162dab4a93f6993e_ba778d6f71e911f1897e5254002afed2
-    ReservedCode2: wqE2qWu4pgqyV1qifXHLo4OnvAuT2qbqYgx2I3F4j324elhlcW7zcCVNd/aUEvEX5lTYcHF8GZP+aw8wjqW6XC5OYRKx7qljDPokyP7oMjnTaSdt6vJ9j0yTBlU6+Y+CjWxZiD2LlrtZIbPkaBw2Jv8I9sclEHSkYLogXIXClLrHX10AloiE0N6iL+E=
----
-
 # BuildAudit 硬件对比助手
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -119,4 +108,3 @@ BuildAudit 是一个装机配置对比与评分工具，帮你在攒机时快速
 ## 许可证
 
 MIT License — 详见 [LICENSE](LICENSE) 文件。
-
