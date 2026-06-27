@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>硬件对比系统 v2</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif; background:#1a1a2e; color:#eee; min-height:100vh; }
+.container { max-width:1400px; margin:0 auto; padding:20px; }
+h1 { text-align:center; margin-bottom:10px; background:linear-gradient(135deg,#667eea,#f093fb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-size:28px; }
+.subtitle { text-align:center; color:#888; margin-bottom:20px; font-size:13px; }
+
+/* Tabs */
+.tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; justify-content:center; }
+.tab-btn { padding:8px 16px; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; background:#2a2a3e; color:#aaa; transition:all .2s; }
+.tab-btn:hover { background:#3a3a4e; color:#fff; }
+.tab-btn.active { background:#667eea; color:#fff; }
+
+/* Controls */
+.controls { display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
+.controls input, .controls select { padding:8px 14px; border-radius:8px; border:1px solid #3a3a4e; background:#2a2a3e; color:#eee; font-size:14px; outline:none; }
+.controls input:focus, .controls select:focus { border-color:#667eea; }
+
+/* Table */
+.table-wrap { overflow-x:auto; background:#1f1f35; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.3); }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+thead th { background:#2a2a40; padding:10px 8px; text-align:left; font-weight:600; color:#ccc; position:sticky; top:0; z-index:2; white-space:nowrap; }
+thead th:first-child { width:38px; text-align:center; }
+td { padding:8px; border-bottom:1px solid #2a2a3e; white-space:nowrap; }
+tr:hover td { background:#2a2a45; }
+tr.selected td { background:#3a2a55; }
+.tier-s { color:#ff7eb3; font-weight:700; }
+.tier-a { color:#ff9f43; font-weight:700; }
+.tier-b { color:#feca57; }
+.tier-c { color:#54a0ff; }
+.tier-d { color:#8395a7; }
+.btn-select { padding:4px 10px; border-radius:6px; border:1px solid #667eea; background:transparent; color:#667eea; cursor:pointer; font-size:12px; transition:all .2s; }
+.btn-select:hover { background:#667eea; color:#fff; }
+.btn-selected { background:#e74c3c; border-color:#e74c3c; color:#fff; }
+.btn-selected:hover { background:#c0392b; }
+.compare-bar { position:fixed; bottom:0; left:0; right:0; background:#16213e; padding:12px 20px; display:flex; align-items:center; gap:16px; z-index:100; box-shadow:0 -2px 10px rgba(0,0,0,.5); }
+.compare-bar .sel-count { color:#667eea; font-weight:700; font-size:18px; }
+.btn-clear { padding:6px 14px; border-radius:6px; border:1px solid #555; background:transparent; color:#aaa; cursor:pointer; }
+.btn-compare, .btn-bench, .btn-rig { padding:8px 20px; border-radius:8px; border:none; cursor:pointer; font-weight:600; background:#667eea; color:#fff; }
+.btn-compare:disabled, .btn-bench:disabled, .btn-rig:disabled { background:#3a3a4e; color:#666; cursor:not-allowed; }
+
+/* 对比/跑分面板 */
+#compareSection { max-height:80vh; overflow-y:auto; }
+.bench-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.bench-header h3 { margin:0; font-size:18px; }
+.btn-close { background:none; border:none; color:#aaa; font-size:22px; cursor:pointer; padding:0 8px; }
+.btn-close:hover { color:#fff; }
+.bench-summary { margin-bottom:20px; }
+.bench-cat { margin-bottom:14px; }
+.bench-cat strong { display:block; margin-bottom:6px; color:#667eea; }
+.bench-items { display:flex; flex-direction:column; gap:4px; }
+.bench-item { display:flex; align-items:center; gap:12px; padding:4px 0; }
+.bench-name { min-width:140px; font-size:13px; }
+.bench-score { min-width:80px; font-size:12px; }
+.bench-bar { flex:1; height:8px; background:#2a2a3e; border-radius:4px; overflow:hidden; }
+.bench-fill { height:100%; border-radius:4px; }
+.bench-diff { margin-top:16px; }
+.bench-diff h4 { margin:0 0 8px; color:#f093fb; }
+.diff-table { width:100%; border-collapse:collapse; font-size:12px; }
+.diff-table th, .diff-table td { padding:6px 8px; border-bottom:1px solid #2a2a3e; text-align:center; }
+.diff-table th { background:#2a2a40; color:#ccc; }
+.diff-table td:first-child { text-align:left; color:#888; }
+.same-cell { color:#54a0ff; }
+.diff-cell { color:#feca57; font-weight:600; }
+.comp-table-wrap { overflow-x:auto; }
+.comp-table { width:100%; border-collapse:collapse; font-size:12px; }
+.comp-table th, .comp-table td { padding:8px 10px; border-bottom:1px solid #2a2a3e; text-align:center; }
+.comp-table th { background:#2a2a40; color:#ccc; white-space:nowrap; }
+.comp-table td:first-child { text-align:left; color:#888; }
+.better { color:#43e97b; font-weight:700; }
+.worse { color:#e74c3c; }
+.rig-overall { font-size:28px; font-weight:700; text-align:center; margin:20px 0; }
+.tier-s { color:#ff7eb3; }
+.tier-a { color:#ff9f43; }
+.tier-b { color:#feca57; }
+.tier-c { color:#54a0ff; }
+.tier-d { color:#8395a7; }
+.empty-msg { text-align:center; padding:30px; color:#666; }
+
+/* 策略选择器 */
+.strategy-selector { display:flex; gap:8px; margin-bottom:20px; justify-content:center; }
+.strategy-btn { padding:8px 20px; border-radius:8px; border:1px solid #3a3a4e; background:#2a2a3e; color:#aaa; cursor:pointer; font-size:14px; font-weight:600; transition:all .2s; }
+.strategy-btn:hover { background:#3a3a4e; color:#fff; border-color:#667eea; }
+.strategy-btn.active { background:#667eea; color:#fff; border-color:#667eea; }
+
+/* 评分仪表盘 */
+.score-hero { text-align:center; padding:24px 0 16px; }
+.score-num { font-size:72px; font-weight:800; line-height:1.1; }
+.score-bar-wrap { max-width:400px; margin:12px auto; height:10px; background:#2a2a3e; border-radius:5px; overflow:hidden; }
+.score-bar-fill { height:100%; border-radius:5px; transition:width .6s ease; }
+.score-oneliner { font-size:15px; color:#aaa; margin-top:8px; }
+
+/* 维度表格 */
+.dim-table { width:100%; border-collapse:collapse; font-size:13px; margin:20px 0; }
+.dim-table th { background:#2a2a40; color:#ccc; padding:8px 12px; text-align:left; font-weight:600; }
+.dim-table td { padding:8px 12px; border-bottom:1px solid #2a2a3e; }
+.dim-score { font-size:18px; }
+.dim-weight { color:#888; font-size:12px; }
+.dim-detail { font-size:12px; color:#aaa; max-width:300px; }
+
+/* 红色旗标 */
+.flags-section { margin:16px 0; }
+.flag { padding:8px 14px; border-radius:6px; margin-bottom:6px; font-size:13px; line-height:1.5; }
+.flag-critical { background:rgba(255,68,68,0.12); border-left:3px solid #ff4444; color:#ff6666; }
+.flag-warn { background:rgba(255,179,71,0.12); border-left:3px solid #ffb347; color:#ffb347; }
+.flag-tag { font-weight:700; margin-right:6px; }
+
+/* 降分/加分项 */
+.list-section { margin:16px 0; }
+.red-title { color:#ff6666; margin:0 0 8px; font-size:14px; }
+.green-title { color:#44cc44; margin:0 0 8px; font-size:14px; }
+.list-item { padding:4px 0; font-size:13px; color:#ccc; }
+
+/* 洋垃圾警告 */
+.ewaste-warn { padding:10px 14px; border-radius:6px; background:rgba(255,68,68,0.1); border:1px solid rgba(255,68,68,0.3); color:#ff8888; font-size:13px; margin:12px 0; }
+
+/* 机箱需求 */
+.case-reqs-section { margin:20px 0; padding:16px; background:#1a1a30; border-radius:8px; border:1px solid #2a2a4e; }
+.case-reqs-section h4 { margin:0 0 10px; color:#30cfd0; font-size:15px; }
+.case-reqs-list { list-style:none; padding:0; margin:0; }
+.case-reqs-list li { padding:6px 0; font-size:13px; color:#ccc; border-bottom:1px solid #2a2a3e; }
+.case-reqs-list li:last-child { border-bottom:none; }
+.hl { color:#ffb347; font-weight:700; }
+.hl2 { color:#30cfd0; font-weight:700; }
+</style>
+</head>
+<body>
+<div id="loadingMsg" style="text-align:center;padding:40px;color:#aaa;font-size:16px;">数据加载中...</div>
+<div class="container" id="mainContainer" style="display:none">
+    <h1>硬件对比系统</h1>
+    <div class="subtitle" id="subtitle"></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="搜索型号..." oninput="onSearch()">
+        <select id="brandFilter" onchange="onBrandChange()"><option value="">全部品牌</option></select>
+        <select id="socketFilter" onchange="onSocketChange()" style="display:none"><option value="">全部接口</option></select>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;">
+            <input type="checkbox" id="selectAllCb" onchange="selectAllChanged()"> 全选
+        </label>
+    </div>
+    <div class="table-wrap"><table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div>
+</div>
+
+<div id="compareSection" style="display:none; background:#1f1f35; border-radius:12px; padding:20px; margin-top:20px; box-shadow:0 4px 20px rgba(0,0,0,.3);">
+    <div id="compareList"></div>
+</div>
+
+<div class="compare-bar" id="compareBar" style="display:none">
+    <span>已选 <span class="sel-count" id="selectedCount">0</span> 款</span>
+    <button class="btn-clear" onclick="clearSelection()">清空</button>
+    <button class="btn-compare" id="btnStartCompare" onclick="startCompare()" disabled>开始对比</button>
+    <button class="btn-bench" id="btnBenchmark" onclick="startBenchmark()" disabled>跑分分析</button>
+    <button class="btn-rig" id="btnRigScore" onclick="calculateRigScore()" disabled style="display:none">装机跑分</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

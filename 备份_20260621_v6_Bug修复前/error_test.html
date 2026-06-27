@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Error Test</title></head>
+<body>
+<h3>Error Catcher</h3>
+<div id="log" style="font-family:monospace;white-space:pre-wrap;background:#1a1a2e;color:#0f0;padding:16px;"></div>
+<script>
+var logEl = document.getElementById('log');
+function log(msg) { logEl.textContent += msg + '\n'; }
+log('Page loaded');
+
+window.onerror = function(msg, url, line, col, error) {
+    log('ERROR: ' + msg + ' at ' + url + ':' + line + ':' + col);
+    if (error && error.stack) log(error.stack);
+};
+
+// Try loading app.js
+try {
+    var s = document.createElement('script');
+    s.src = 'app.js';
+    s.onload = function() { log('app.js loaded successfully'); };
+    s.onerror = function() { log('FAILED to load app.js'); };
+    document.head.appendChild(s);
+} catch(e) {
+    log('Exception loading script: ' + e.message);
+}
+</script>
+</body>
+</html>
